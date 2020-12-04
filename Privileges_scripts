@@ -1,0 +1,69 @@
+***********************************************************
+
+-- user creation and password resetting
+
+GRANT select ON *.* To 'abhishek'@'%' IDENTIFIED BY 'abhishek@123';
+
+for specific table :
+
+GRANT SELECT ON tmp.* TO 'aarti_master';
+
+UPDATE `mysql`.`user` SET `References_priv`='Y' WHERE `Host`='%' and`User`='release';
+
+-- update password
+
+UPDATE mysql.user SET PASSWORD=PASSWORD('hop@123') WHERE USER='anshu@1';
+FLUSH PRIVILEGES;
+
+
+
+-- Grants for selected db and all tables:
+
+select distinct concat("GRANT SELECT ON ",table_schema,".* TO 'db_deploy'@'%' IDENTIFIED BY  'UGc6DkKgU7';") from information_schema.tables
+where table_schema not  in ( 'tmp','innodb','db_config','information_schema','performance_schema','sys','mysql');
+
+
+-- user creation with constraints
+
+CREATE USER 'francis'@'localhost' IDENTIFIED BY 'frank'
+->     WITH MAX_QUERIES_PER_HOUR 20
+->          MAX_UPDATES_PER_HOUR 10
+->          MAX_CONNECTIONS_PER_HOUR 5
+->          MAX_USER_CONNECTIONS 2;
+
+ALTER USER 'user1'@'localhost' WITH MAX_USER_CONNECTIONS 0;
+
+***********************************************************
+-- to check which privileges to one uesr
+
+SHOW GRANTS for 'aaditya';
+
+
+-- query to check privilges to multiple users
+
+select * from( select distinct User,group_concat(distinct Db) as db,
+replace(replace(trim(both ',' from concat_ws(',',
+if(Select_priv="Y","Select",""), 
+if(Insert_priv="Y","Insert",""), 
+if(Update_priv="Y","Update",""), 
+if(Delete_priv="Y","Delete",""), 
+if(Create_priv="Y","Create",""), 
+if(Drop_priv="Y","Drop",""), 
+if(Grant_priv="Y","Grant",""), 
+if(References_priv="Y","References",""), 
+if(Index_priv="Y","Index",""), 
+if(Alter_priv="Y","Alter",""), 
+if(Create_tmp_table_priv="Y","Create_tmp_table",""), 
+if(Lock_tables_priv="Y","Lock_tables",""), 
+if(Create_view_priv="Y","Create_view",""), 
+if(Show_view_priv="Y","Show_view",""), 
+if(Create_routine_priv="Y","Create_routine",""), 
+if(Alter_routine_priv="Y","Alter_routine",""), 
+if(Execute_priv="Y","Execute",""), 
+if(Event_priv="Y","Event",""), 
+if(Trigger_priv="Y","Trigger,",""))),',,,,',','),',,,,',',') as priv
+from mysql.db group by user,priv) a 
+where user in  ('admin','db_user')  and priv!='select';
+
+***********************************************************
+
