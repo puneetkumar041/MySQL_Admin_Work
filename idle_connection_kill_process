@@ -1,0 +1,70 @@
+-- killing heavy queries or connections
+
+
+CREATE TABLE tempo.tbl_killed_connection_log(KEY(query_user),KEY(query_host),KEY(query_time),KEY(query_info(750)))
+SELECT  id, USER AS query_user,HOST AS query_host,TIME AS query_time,info AS query_info  FROM information_schema.PROCESSLIST LIMIT 0;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS history.purge_idle$$
+CREATE PROCEDURE history.purge_idle()
+BEGIN 
+DECLARE c_id BIGINT(21);
+DECLARE done_handler INT(5) DEFAULT '0';
+DECLARE done INT DEFAULT 0;
+DECLARE c CURSOR FOR SELECT id FROM information_schema.processlist
+WHERE info IS NOT NULL AND db IS NOT NULL AND TIME >1800 
+ORDER BY TIME  DESC;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=TRUE;
+SET done = 0;
+
+
+CREATE TABLE IF NOT EXISTS history.`purge_connection_log` (
+`id` BIGINT(21) UNSIGNED NOT NULL DEFAULT '0',
+`query_user` VARCHAR(16) CHARACTER SET utf8 NOT NULL DEFAULT '',
+`query_host` VARCHAR(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
+`query_time` INT(7) NOT NULL DEFAULT '0',
+`query_info` LONGTEXT CHARACTER SET utf8,
+`insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
+KEY `query_user` (`query_user`),
+KEY `query_host` (`query_host`),
+KEY `query_time` (`query_time`),
+KEY `query_info` (`query_info`(255)),
+KEY `insert_time` (`insert_time`)
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
+
+
+INSERT INTO history.purge_connection_log(id,query_user,query_host,query_time,query_info,insert_time)
+SELECT  id, USER AS query_user,HOST AS query_host,TIME AS query_time,info AS query_info,NOW() AS insert_time  FROM information_schema.PROCESSLIST
+WHERE info IS NOT NULL AND TIME >1800 ;
+--       
+OPEN c;
+REPEAT
+FETCH  c  INTO c_id ;
+IF NOT done THEN 
+
+CALL mysql.rds_kill(c_id);
+
+SET done = done_handler;
+END IF;      
+UNTIL done END REPEAT;
+CLOSE c;
+END $$
+DELIMITER ;
+
+############
+
+#DROP EVENT  tempo.schedule_test;
+
+DELIMITER $$
+
+ALTER EVENT  history.purge_idle_connection
+ON SCHEDULE EVERY 10 MINUTE STARTS '2017-01-18 10:11:28' ON COMPLETION
+PRESERVE  DO 
+BEGIN
+CALL history.purge_idle();
+END$$
+
+DELIMITER ; 
+
+ALTER event history.purge_idle_connection ENABLE;
+
