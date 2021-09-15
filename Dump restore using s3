@@ -1,0 +1,20 @@
+DUMP RESTORE VIA S3 BUCKET:
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1) dumping data from mysql
+mysqldump -u <USER> -p <DB> -h <HOST> table_name > table_name.sql
+
+2) copying it to s3 bucket
+aws s3 cp <Fully Qualified Local filename> s3://<S3BucketName>
+
+3) downloading data from s3 bucket
+   aws s3 cp s3://{path}/table_name.sql  < local file path >
+
+4) restoring
+
+mysql -u <USER> -p <DB> < table_name.sql
+
+
+
+
+REFERENCES :: https://www.middlewareinventory.com/blog/ec2-s3-copy/
