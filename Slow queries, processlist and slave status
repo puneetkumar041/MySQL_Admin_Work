@@ -1,0 +1,35 @@
+<><><><><><><><><><><> CONFIG FILE cred.txt <><><><><><><><><><><><>
+DB_HOST="172.31.33.38"
+DB_USER="root"
+DB_PASSWORD="MyNewPassword@12345"
+
+
+<><><><><><><><><><><> processlist.sh <><><><><><><><><><><><>
+
+
+#!/bin/bash
+
+HOST=`cat cred.txt | grep 'DB_HOST' | cut -d '"' -f 2`
+USR=`cat cred.txt | grep 'DB_USER' | cut -d '"' -f 2`
+PASS=`cat cred.txt | grep 'DB_PASSWORD' | cut -d '"' -f 2`
+
+rm -rf load.log processlist.log
+
+
+mysql -u$USR -h$HOST -p$PASS -e "select id as Connection_ID,user,SUBSTRING_INDEX(HOST,':',1) as host,DB,time,info as query FROM information_schema.processlist WHERE info is not null and time>30 order by time desc limit 5;">processlist.log
+echo "SLOW Queries are :"
+#cat processlist.log | tail -n +2 | column -t -s "|"
+cat processlist.log | column -t -s "|"
+echo "############ LOAD ################"
+
+mysql -u$USR -h$HOST -p$PASS -e "system w;">load.log
+echo "LOAD on server is :"
+head -1 load.log
+
+echo "########### REPLICATION LAG ################"
+mysql -u$USR -h$HOST -p$PASS -e "show slave status\G;" | awk '/Seconds_Behind_Master/{print $0}'
+
+
+<><><><><><><><><><><> X <><><><><><><><><><><><>
+
+chmod 777 config.txt processlist.sh
