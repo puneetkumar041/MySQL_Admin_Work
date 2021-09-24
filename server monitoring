@@ -1,0 +1,24 @@
+Create a file named monitor.sh
+
+#!/bin/bash
+echo "-------------Checking Server Health--------------------"
+now=$(date +"%r")
+echo "Start time : $now" >> stats.txt
+echo "   ">> stats.txt
+cpu_use=`top -b -n 1 | grep Cpu | awk '{print $2}'|cut -f 1 -d "."`
+cpu_use="${cpu_use} %"
+ echo "cpu utilization: $cpu_use" >> stats.txt
+free -m | awk 'NR==2{printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }' >> stats.txt
+top -bn1 | grep load | awk '{printf "CPU Load: %.2f\n", $(NF-2)}' >> stats.txt
+echo "Disk Usage:">> stats.txt
+df -h | awk '{printf("%-25s %10s %8s %8s \n",$1,  $2, $3, $4, $5)}' >> stats.txt
+new=$(date +"%r")
+echo "   ">> stats.txt
+echo "End time : $new" >> stats.txt
+echo "--------------------------------------" >> stats.txt
+
+
+chmod monitor.sh
+
+sh monitor.sh
+cat stats.txt
