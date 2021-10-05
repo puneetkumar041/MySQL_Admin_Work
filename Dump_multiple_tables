@@ -1,0 +1,34 @@
+STEP 1: Create config file
+
+<><><><><><><><><><><> CONFIG FILE <><><><><><><><><><><><>
+DB_HOST="IP"
+DB_USER="user"
+DB_PASSWORD="password"
+
+STEP 2: Create file having list of tables
+
+<><><><><><><><><><><> list.txt ( list of tables ) <><><><><><><><><><><><>
+test
+test_dept
+test_emp
+test_time
+
+STEP 3: Create dump_process_so script for taking backup
+
+<><><><><><><><><><><> dump_process_so.sh <><><><><><><><><><><><>
+
+#!/bin/bash
+echo "------------- Taking DUMP of tables --------------------"
+
+HOST=`cat cred.txt | grep 'DB_HOST' | cut -d '"' -f 2`
+USR=`cat cred.txt | grep 'DB_USER' | cut -d '"' -f 2`
+PASS=`cat cred.txt | grep 'DB_PASSWORD' | cut -d '"' -f 2`
+
+
+file=list.txt
+for i in `cat $file`; do echo "removing old backup $i" && rm -rf $i.sql.gz ; done
+for i in `cat $file`; do echo "taking dump $i" && mysqldump -u$USR -h$HOST -p$PASS test $i > $i.sql ; done
+for i in *.sql; do echo "zipping $i" && gzip $i; done
+for i in *.sql.gz ; do echo "copying $i" && scp $i.sql.gz ssh_user@Destination_IP:<Path> ; done
+for i in `cat $file`; do echo Count for $i && mysql -u$USR -h$HOST -p$PASS -e "select count(1) from db.$i;" ; done 
+
