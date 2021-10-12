@@ -215,15 +215,7 @@ http://www.sql-workbench.net/downloads.html
 Detailed steps for installation and connection:
 http://docs.aws.amazon.com/redshift/latest/mgmt/connecting-using-workbench.html
 
-Drivers:
-http://docs.aws.amazon.com/redshift/latest/mgmt/configure-jdbc-connection.html#download-jdbc-driver
 
-download and copy to desktop
-in manage driver: path of driver from desktop
-jdbc:redshift://hs.calkks75sjbg.ap-south-1.redshift.amazonaws.com:5439/dev
-Username: query
-password: 5kl2GvIU   
-table name: apilogs
 
 -- To access Postgress user creation
 
@@ -235,79 +227,6 @@ GRANT USAGE ON SCHEMA android,live_android TO query;
 GRANT SELECT ON ALL TABLES IN SCHEMA android,live_android TO query;
 
 
-==========================================
-
--- Master  (singapore) now mumbai
-host name : master.camv7qolninq.ap-south-1.rds.amazonaws.com
-user name : hsadmin
-password  : asdf234@#TYwew#@rre
-
-==========================================
--- Bravo DB
-host : bravo.camv7qolninq.ap-south-1.rds.amazonaws.com
-user: operations         	/    HOPSCOTCH             / query
-password: ops8089asdf^&*       /    5kl2GvIU5kl2GvIU       / 5kl2GvIU
-
-==========================================
--- QA DB 
-hot name: qa.camv7qolninq.ap-south-1.rds.amazonaws.com
-user name:release  
-pwd:hs123456 
-
-user name : hsadmin
-password  : U(X9nD[x%L,
-==========================================
--- UAT DB
-host name: uat.ccspmc3d8kkq.us-east-1.rds.amazonaws.com
-user name:release
-pwd:hs123456 
-
-user name : hsadmin
-password  : U(X9nD[x%L,
-
-==========================================
--- Slave DB
-host name: slave.camv7qolninq.ap-south-1.rds.amazonaws.com / slavedb.hs.internal
-user name:release  /tech              / hsadmin
-pwd	 :hs123456 / oiuyt987$#!      /asdf234@#TYwew#@rre
-
-==========================================
--- Development DB
-host name: dev.camv7qolninq.ap-south-1.rds.amazonaws.com
-user name:release
-pwd:hs123456 
-
-user name : hsadmin
-password  : U(X9nD[x%L,
-
-==========================================
--- Reports DB
-host name : reports.camv7qolninq.ap-south-1.rds.amazonaws.com
-user:     HOPSCOTCH
-password: 5kl2GvIU5kl2GvIU
-
-operations
-ops8089asdf^&*
-
-to connect slave>>>
-
-
-If you are 
-facing any issue while connecting to database.
-
-Please run below command for respective OS. 
-
-For Ubuntu :
-sudo /etc/init.d/dns-clean
-
-For Mac :
-dscacheutil -flushcache
-
-For Windows :
-ipconfig /flushdns
-
-then 
-Host: slavedb.hs.internal
 
 
 
