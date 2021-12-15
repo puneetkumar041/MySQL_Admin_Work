@@ -1,7 +1,7 @@
 <><><><><><><><><><><> CONFIG FILE cred.txt <><><><><><><><><><><><>
-DB_HOST="172.31.33.38"
-DB_USER="root"
-DB_PASSWORD="MyNewPassword@12345"
+DB_HOST="IP"
+DB_USER="user"
+DB_PASSWORD="pwd"
 
 
 <><><><><><><><><><><> processlist.sh <><><><><><><><><><><><>
