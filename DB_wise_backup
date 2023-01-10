@@ -1,0 +1,24 @@
+#!/bin/bash
+echo "------------- Taking DUMP of DB --------------------"
+DIR="_"`date +%d%m%y`
+
+HOST=`cat cred.txt | grep 'DB_HOST1' | cut -d '"' -f 2`
+USR=`cat cred.txt | grep 'DB_USER1' | cut -d '"' -f 2`
+PASS=`cat cred.txt | grep 'DB_PASSWORD1' | cut -d '"' -f 2`
+echo $HOST
+
+echo "------------- Creating DB List --------------------"
+rm -rf list.txt
+mysql -u$USR  -p$PASS -e "select distinct table_schema from information_Schema.tables where table_schema  not in ('information_schema','mysql','performance_schema','sys');" > list.txt
+
+echo "------------- Taking DB wise backup --------------------"
+file=list.txt
+for i in `awk 'NR>1' $file`; do echo "cleanup old backup" $i  ; done
+for i in `awk 'NR>1' $file`; do echo "new list is" $i  ; done
+for i in `awk 'NR>1' $file`;  do echo "removing old backup $i" && rm -rf $i.sql.gz ; done
+for i in `awk 'NR>1' $file`;  do echo "taking dump $i" && mysqldump -u$USR -p$PASS $i > $i${DIR}.sql| gzip -9 $i${DIR}.sql; done
+for i in `awk 'NR>1' $file`; do echo "copying backup to s3 of $i DB" && aws s3 cp  $i${DIR}.sql.gz s3://lenskart-database-backups/production/mysql/nexs/  > /tmp/pipeline.log; done
+
+#for i in *.sql.gz ; do echo "copying $i" && scp $i.sql.gz ssh_user@Destination_IP:<Path> ; done
+#for i in `cat $file`; do echo Count for $i && mysql -u$USR -h$HOST -p$PASS -e "select count(1) from db.$i;" ; done
+
