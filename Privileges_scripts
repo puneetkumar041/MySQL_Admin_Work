@@ -1,6 +1,6 @@
 ***********************************************************
 
--- user creation and password resetting
+#User creation and password resetting
 
 GRANT select ON *.* To 'abhishek'@'%' IDENTIFIED BY 'abhishek@123';
 
@@ -10,20 +10,23 @@ GRANT SELECT ON tmp.* TO 'aarti_master';
 
 UPDATE `mysql`.`user` SET `References_priv`='Y' WHERE `Host`='%' and`User`='release';
 
--- update password
+#Reset password
 
 UPDATE mysql.user SET PASSWORD=PASSWORD('hop@123') WHERE USER='anshu@1';
+or 
+ALTER USER 'username'@'%' IDENTIFIED BY 'password';
+
 FLUSH PRIVILEGES;
 
+***********************************************************
 
-
--- Grants for selected db and all tables:
+#Grants for selected db and all tables:
 
 select distinct concat("GRANT SELECT ON ",table_schema,".* TO 'db_deploy'@'%' IDENTIFIED BY  'UGc6DkKgU7';") from information_schema.tables
 where table_schema not  in ( 'tmp','innodb','db_config','information_schema','performance_schema','sys','mysql');
 
-
--- user creation with constraints
+***********************************************************
+#User creation with constraints
 
 CREATE USER 'francis'@'localhost' IDENTIFIED BY 'frank'
 ->     WITH MAX_QUERIES_PER_HOUR 20
@@ -34,12 +37,15 @@ CREATE USER 'francis'@'localhost' IDENTIFIED BY 'frank'
 ALTER USER 'user1'@'localhost' WITH MAX_USER_CONNECTIONS 0;
 
 ***********************************************************
--- to check which privileges to one uesr
+#To check which privileges to one uesr
 
-SHOW GRANTS for 'aaditya';
+SHOW GRANTS for 'aaditya'@'%';
+***********************************************************
+-- revoke privileges
+REVOKE DELETE ON nexs.* FROM 'nexs_user'@'%';
+***********************************************************
 
-
--- query to check privilges to multiple users
+#Query to check privilges to multiple users
 
 select * from( select distinct User,group_concat(distinct Db) as db,
 replace(replace(trim(both ',' from concat_ws(',',
@@ -64,6 +70,19 @@ if(Event_priv="Y","Event",""),
 if(Trigger_priv="Y","Trigger,",""))),',,,,',','),',,,,',',') as priv
 from mysql.db group by user,priv) a 
 where user in  ('admin','db_user')  and priv!='select';
+
+***********************************************************
+
+#Users migrations
+
+select concat("show grants for '",user,"'@'",host,"';") as priv from mysql.user where user not in ('root') ;
+Paste the output in below quotes.
+mysql –udb_user -p -h<IP>  mysql -e " " > grants.sql
+
+
+sed 's/$/;/' infile > outfile.sql
+Open vi editor 
+:%s/$/,/g
 
 ***********************************************************
 
