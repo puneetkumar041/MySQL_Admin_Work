@@ -17,6 +17,8 @@ Monitor below parameters with the help of scripts
 
 *) MySQL server's CPU utlization 
 
+*) Load on MySQL Server 
+
 ### USER management
 MySQL server allows us to create numerous users and databases and grant appropriate privileges so that the users can access and manage databases.
 The information_schema, mysql, performance_schema, and sys databases are created at installation time and they are storing information about all other databases, system configuration, users, permission and other important data. These databases are necessary for the proper functionality of the MySQL installation.
