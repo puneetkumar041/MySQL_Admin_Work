@@ -1,0 +1,53 @@
+#!/bin/bash
+# Set the MySQL credentials
+#MYSQL_HOST=`cat cred.txt | grep 'DB_HOST1' | cut -d '"' -f 2`
+#MYSQL_USER=`cat cred.txt | grep 'DB_USER1' | cut -d '"' -f 2`
+#MYSQL_PASSWORD=`cat cred.txt | grep 'DB_PASSWORD1' | cut -d '"' -f 2`
+
+# Set the threshold values
+#RAM_THRESHOLD=10
+LOAD_THRESHOLD=1
+CONNECTION_THRESHOLD=10
+CPU_THRESHOLD=10
+
+# Get the current RAM usage
+#RAM_USAGE=$(mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW STATUS LIKE 'Key_buffer_size';" | awk 'NR==2{print $2 / 1024 / 1024}')
+
+# Get the current CPU utilization
+CPU_UTILIZATION=$(top -bn1 | head -8 | awk '{print $9}' | tail -1 |cut -f 1 -d ".")
+
+LOAD_USAGE=$(top -bn1 | head -1 | awk '{print $12}' |cut -f 1 -d ".")
+
+# Get the number of active connections
+#ACTIVE_CONNECTIONS=$(/usr/local/mysql/bin/mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW STATUS LIKE 'Threads_connected';" | awk 'NR==2{print $2}')
+
+# Check if the CPU utilization is above the threshold
+if [ "$CPU_UTILIZATION" -gt "$CPU_THRESHOLD" ];
+then
+  echo "+------------------------------------------------------------------+"
+  echo "CPU utilization is above the threshold: $CPU_UTILIZATION%"
+  echo "+------------------------------------------------------------------+"
+  echo "Top 5 processes which consuming high CPU"
+  echo "+------------------------------------------------------------------+"
+  echo "$(ps -eo pcpu,pid,user,args | sort -k 1 -r | head -5 | awk '{print $1,$2,$3,$9}')"
+
+  # Add code to send an alert, e.g. email or SMS
+fi
+
+
+# Check if the CPU utilization is above the threshold
+if [ $LOAD_USAGE -gt $LOAD_THRESHOLD ];
+then
+  echo "+------------------------------------------------------------------+"
+  echo "Load Usage is above the threshold: $LOAD_USAGE%"
+  # Add code to send an alert, e.g. email or SMS
+fi
+
+
+# Check if the number of connections is above the threshold
+#if [ "$ACTIVE_CONNECTIONS" -gt "$CONNECTION_THRESHOLD" ]
+#then
+#  echo "Number of connections is above the threshold: $ACTIVE_CONNECTIONS"
+  # Add code to send an alert, e.g. email or SMS
+#fi
+
