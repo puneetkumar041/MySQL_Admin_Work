@@ -32,3 +32,9 @@ The information_schema, mysql, performance_schema, and sys databases are created
 *) Revoking permissions
 
 *) User migrations
+
+### Archiving 
+As the data in MySQL keeps growing, the performance for all the queries will keep decreasing. Typically, queries that originally took milliseconds can now take seconds (or more). That requires a lot of changes (code, MySQL, etc.) to make faster.
+
+The main goal of archiving the data is to increase performance (“make MySQL fast again”), decrease costs and improve ease of maintenance (backup/restore, cloning the replication slave, etc.)
+
