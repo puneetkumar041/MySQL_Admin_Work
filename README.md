@@ -1,12 +1,26 @@
-### Shell Scripts for Day to Day tasks and regular activities 
+### Scripts for Day to Day tasks and regular DBA activities 
 
 ![SHELL SCRIPT](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
-### Various Backup scripts usnig mysqldump
+### various types of Backup 
+
 Mysqldump is a command-line utility that is used to generate the logical backup of the MySQL database. It produces the SQL Statements that can be used to recreate the database objects and data. The command can also be used to generate the output in the XML, delimited text, or CSV format.
 
+*) Full Database Backup
 
-### Various Server Monitoring scripts and commands
+*) Table wise Backup
+
+*) Incremental Backup
+
+*) Database Backup and copy to s3 bucket
+
+*) Backup from multiple servers
+
+ 
+### Server Monitoring 
+
+Server monitoring helps to monitor your servers and entire infrastructure for critical performance metrics and stay on top of your data center resources. Get in-depth visibility into key performance indicators of your application servers, mail servers, web servers, virtual servers, and database servers to eliminate outages and performance issues
+
 Monitor below parameters with the help of scripts
 
 *) Service Running or not. 
@@ -20,6 +34,7 @@ Monitor below parameters with the help of scripts
 *) Load on MySQL Server 
 
 ### USER management
+
 MySQL server allows us to create numerous users and databases and grant appropriate privileges so that the users can access and manage databases.
 The information_schema, mysql, performance_schema, and sys databases are created at installation time and they are storing information about all other databases, system configuration, users, permission and other important data. These databases are necessary for the proper functionality of the MySQL installation.
 
@@ -38,3 +53,4 @@ As the data in MySQL keeps growing, the performance for all the queries will kee
 
 The main goal of archiving the data is to increase performance (“make MySQL fast again”), decrease costs and improve ease of maintenance (backup/restore, cloning the replication slave, etc.)
 
+*) Customize archiving script for n number of days 
