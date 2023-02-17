@@ -1,6 +1,9 @@
-### Scripts for Day to Day tasks and regular DBA activities 
+<img width="200" alt="image" src="https://user-images.githubusercontent.com/25247630/219608291-c4ad20a1-b040-46e0-8cef-ca60dc5b76f3.png">
+
 
 ![SHELL SCRIPT](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
+
+### Scripts for Day to Day tasks and regular DBA activities 
 
 ### various types of Backup 
 
