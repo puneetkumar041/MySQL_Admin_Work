@@ -9,7 +9,7 @@
 set -x
 BACKUP_DIR="/home/dba/usersync"
 MYSQL_USER="root"
-MYSQL_PASSWORD="m@nwiththepl@n"
+MYSQL_PASSWORD="root@123"
 MYSQL=/usr/local/mysql/bin/mysql
 echo -n "Enter Socket: "
 read socket_name
@@ -17,7 +17,7 @@ echo -n "Enter Hostname: "
 read host_name
 cd $BACKUP_DIR
 $MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -S$socket_name -s -N -e"select concat('show grants for \'',user,'\'@\'',host,'\';') from mysql.user where user not in('mafiree','root','repl','replpuser','replusr','replusrnew','appuser');" > $BACKUP_DIR/import.sql 2> bkp.err
-$MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -S$socket_name -s -N -e"select distinct(host) from mysql.user where user not in ('mafiree','repluser','root','repl','replpuser','replusr','replusrnew','appuser');" > $BACKUP_DIR/distincthost.txt
+$MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -S$socket_name -s -N -e"select distinct(host) from mysql.user where user not in ('','repluser','root','repl','replpuser','replusr','','appuser');" > $BACKUP_DIR/distincthost.txt
 $MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -S$socket_name -s -N < $BACKUP_DIR/import.sql > grant.log 1> grant.sql 2> grant.err
 cat $BACKUP_DIR/distincthost.txt | while read LINE
 do
@@ -37,8 +37,8 @@ exit 0
 set -x
 date=`date '+%Y_%m_%d'`
 
-/usr/local/mysql/bin/mysql -u maf_stats_coll -p'st@ts_c0ll' -h10.10.5.140 -P3306 -e"select now();" >> /home/dba/master_health_check/master_health_${date}.txt
-/usr/local/mysql/bin/mysqladmin ping -u maf_stats_coll -p'st@ts_c0ll' -h10.10.5.140  -P3306 >> /home/dba/master_health_check/master_health_${date}.txt
+/usr/local/mysql/bin/mysql -u user -p'pass' -h10.10.5.140 -P3306 -e"select now();" >> /home/dba/master_health_check/master_health_${date}.txt
+/usr/local/mysql/bin/mysqladmin ping -u user -p'PASS' -hIP  --PPORT >> /home/dba/master_health_check/master_health_${date}.txt
 exit 0
 
 
@@ -60,7 +60,7 @@ DBPwd=`cat /home/puneetkumar/cred.txt | grep 'DST_PASSWORD' | cut -d '"' -f 2`
 
 # Function to send message to Google Chat
 send_message_to_google_space() {
-  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAmfYNxN8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=AQqZhybd_r9SKwj2jf5g5yUvnR8FvXyH7Z-B9bBsyRM"
+  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAmfYNxN8/"
   local message="$1"
 
   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$message\"}" "$webhook_url"
@@ -121,8 +121,8 @@ do
   partition=$(echo $output | awk '{print $2}' )
   if [ $usep -ge 95 ]; then
 
-    msg="Running out of disk space $partition $(hostname) - amazon - 172.31.33.26 ($usep%)"
-    curl -X POST --data-urlencode "payload={\"channel\": \"#newrelic_disk_full\", \"username\": \"disk_script\", \"text\": \"Alert: $msg\", \"icon_emoji\": \":hankey:\"}" https://hooks.slack.com/services/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
+    msg="Running out of disk space $partition $(hostname) - amazon - IP ($usep%)"
+    curl -X POST --data-urlencode "payload={\"channel\": \"#newrelic_disk_full\", \"username\": \"disk_script\", \"text\": \"Alert: $msg\", \"icon_emoji\": \":hankey:\"}" https://hooks.slack.com/
   fi
 done
 
@@ -133,7 +133,7 @@ cat diskUsageAlert.sh
 
 # Function to send message to Google Chat
 send_message_to_google_space() {
-  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAMTVpo2A/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=r0mtPLmoMFjWVJWYTUTnmtuAlBiSUH5lz3Bsj5UVYww"
+  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAMTVpo2A/"
   local message="$1"
 
   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$message\"}" "$webhook_url"
@@ -172,20 +172,16 @@ fi
 
 -- replication alerts
 
-CREATE USER 'db_script_user'@'%' IDENTIFIED BY 'SMxrx@st!3ey%Us<8';
-GRANT all ON *.* TO 'db_script_user'@'%' WITH GRANT OPTION;
-GRANT select , show databases  ON *.* TO 'db_script_user'@'%';
-FLUSH PRIVILEGES;
 
 */10  * * * * /bin/bash /home/puneetkumar/mysql_replication_alert.sh > /home/puneetkumar/logfile.log 2>&1
 
 vim /home/puneetkumar/cred.txt
-SRC_HOST="nexs-db-master.prod.internal"
-SRC_USER="db_script_user"
-SRC_PASSWORD="Ad^s7<mE@WGt%s!8"
-DST_HOST="nexs-slave-db.prod.internal"
-DST_USER="db_script_user"
-DST_PASSWORD="SMxrx@st!3ey%Us<8"
+SRC_HOST="host"
+SRC_USER="yser"
+SRC_PASSWORD="pass"
+DST_HOST="host"
+DST_USER="user"
+DST_PASSWORD="pass"
 
 
 vim mysql_replication_alert.sh
@@ -204,7 +200,7 @@ threshold=300
 
 # Function to send message to Google Chat
 send_message_to_google_space() {
-  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAyA6PNOM/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=RBz7WgmsIZk_-16l7TRqtdI-b-8VCn4WtizewOVb7Hg"
+  local webhook_url="https://chat.googleapis.com/v1/spaces/AAAAyA6PNOM/messages?key"
   local message="$1"
 
   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$message\"}" "$webhook_url"
