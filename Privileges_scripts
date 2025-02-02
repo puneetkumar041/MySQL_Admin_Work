@@ -85,4 +85,22 @@ Open vi editor
 :%s/$/,/g
 
 ***********************************************************
+-- restrict 2 tables 
 
+-- Step 1: Create a user (Replace 'secure_user' & 'StrongP@ssw0rd' as needed)
+CREATE USER 'secure_user'@'%' IDENTIFIED BY 'StrongP@ssw0rd';
+
+-- Step 2: Grant full privileges on the entire database (except users & customers)
+GRANT ALL PRIVILEGES ON my_database.* TO 'secure_user'@'%';
+
+-- Step 3: Revoke access from specific tables
+REVOKE ALL PRIVILEGES ON my_database.users FROM 'secure_user'@'%';
+REVOKE ALL PRIVILEGES ON my_database.customers FROM 'secure_user'@'%';
+
+-- Step 4: Apply changes
+FLUSH PRIVILEGES;
+
+-- Verify the user's access (Run as root/admin)
+SHOW GRANTS FOR 'secure_user'@'%';
+
+***********************************************************
